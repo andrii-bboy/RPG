@@ -22,6 +22,7 @@ namespace RPG
             InitializeComponent();
             _player = new Player("Hero", 1);
             _events = GameEvent.GenerateEvents();
+            LoadGameProgress();
             UpdateMainFormUI();
         }
 
@@ -82,11 +83,20 @@ namespace RPG
         }
 
 
+
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             try
             {
-                using (StreamWriter writer = new StreamWriter(SaveFileName))
+                string directory = Path.GetDirectoryName(SaveFileName);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+
+                using (StreamWriter writer = new StreamWriter(SaveFileName, false, System.Text.Encoding.UTF8))
                 {
                     writer.WriteLine(_player.getLevel());
                     writer.WriteLine(_player.Gold);
@@ -117,14 +127,13 @@ namespace RPG
                         writer.WriteLine("None");
                     }
                 }
-
-                MessageBox.Show("Game progress successfully saved!", "Save Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show("Error saving game: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
 
         private void LoadGameProgress()
         {
