@@ -26,9 +26,9 @@ namespace RPG.Forms
 
         private void UpdateCombatUI()
         {
-            lblPlayerHP.Text = $"Your HP: {_player.HP.Value}";
-            lblPlayerMP.Text = $"Your MP: {_player.MP.Value}";
-            lblEnemyHP.Text = $"Enemy HP: {_enemy.HP.Value}";
+            lblPlayerHP.Text = $"Your HP: {_player.HP.Value} / {_player.HP.Max}";
+            lblPlayerMP.Text = $"Your MP: {_player.MP.Value} / {_player.MP.Max}";
+            lblEnemyHP.Text = $"Enemy HP: {_enemy.HP.Value} / {_enemy.HP.Max}";
         }
 
         private void GameTurnStep(string playerActionText)
@@ -45,10 +45,10 @@ namespace RPG.Forms
 
             if (CheckBattleOver()) return;
 
-            
+
             string enemyActionText = _combatManager.ExecuteEnemyTurn();
 
-            
+
             txtCombatLog.Text += enemyActionText;
             UpdateCombatUI();
 
@@ -57,7 +57,7 @@ namespace RPG.Forms
 
         private bool CheckBattleOver()
         {
-            if (_enemy.HP.decrease(0) == false)
+            if (_enemy.HP.Value <= 0)
             {
                 MessageBox.Show($"Victory!\nGold found: {_enemy.getRewardGold()}G\nXP gained: {_enemy.getRewardXp()}", "Combat Ended");
                 _player.Gold += _enemy.getRewardGold();
@@ -66,15 +66,15 @@ namespace RPG.Forms
                 return true;
             }
 
-            if (_player.HP.decrease(0) == false)
+            if (_player.HP.Value <= 0)
             {
-                MessageBox.Show("You fell in battle... Game Over.", "Defeat", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("You fell in battle... Game Over.", "Defeat");
                 Application.Exit();
                 return true;
             }
-
             return false;
         }
+
         private void btnHit_Click(object sender, EventArgs e) => GameTurnStep(_combatManager.PlayerAttack());
         private void btnStrongHit_Click(object sender, EventArgs e) => GameTurnStep(_combatManager.PlayerPowerStrike());
         private void btnBlock_Click(object sender, EventArgs e) => GameTurnStep(_combatManager.PlayerActivateBlock());

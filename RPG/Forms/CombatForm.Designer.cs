@@ -121,7 +121,7 @@
             // 
             this.lblEnemyHP.AutoSize = true;
             this.lblEnemyHP.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lblEnemyHP.Location = new System.Drawing.Point(590, 24);
+            this.lblEnemyHP.Location = new System.Drawing.Point(482, 20);
             this.lblEnemyHP.Name = "lblEnemyHP";
             this.lblEnemyHP.Size = new System.Drawing.Size(98, 32);
             this.lblEnemyHP.TabIndex = 8;

@@ -128,11 +128,18 @@ namespace RPG.Entitites.Characters
             int maxHp = this._endurance * 10;
             int maxMp = this._intelligence * 5;
 
-            if (this.HP != null) this.HP.Init(maxHp, 0);
-            if (this.MP != null) this.MP.Init(maxMp, 0);
+            if (this.HP != null)
+            {
+                this.HP.Init(maxHp, this.HP.Value);
+            }
 
+            if (this.MP != null)
+            {
+                this.MP.Init(maxMp, this.MP.Value);
+            }
             this._criticalChance = this._agility * 0.5;
         }
+
 
         public int CalculateAttackPower()
         {

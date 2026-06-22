@@ -57,7 +57,7 @@ namespace RPG
                 ShopForm shopForm = new ShopForm(_player);
                 shopForm.ShowDialog();
             }
-
+ 
             _player.RecalculateStats();
             UpdateMainFormUI();
         }

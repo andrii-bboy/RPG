@@ -22,7 +22,6 @@ namespace RPG.GameServices
             _isPlayerBlocking = false;
             _isEnemyBlocking = false;
         }
-
         public string PlayerAttack()
         {
             if (_player.MP.Value < 2)
@@ -96,8 +95,8 @@ namespace RPG.GameServices
         {
             if (_enemy.HP.Value <= 0) return string.Empty;
 
-            int playerHealAmount = _player.getLevel() * 2;
-            int playerManaAmount = _player.getLevel() * 2;
+            int playerHealAmount = Math.Max(1, _player.Endurance / 3);
+            int playerManaAmount = Math.Max(1, _player.Intelligence / 4);
 
             _player.HP.increase(playerHealAmount);
             _player.MP.increase(playerManaAmount);
@@ -121,6 +120,5 @@ namespace RPG.GameServices
             _player.HP.decrease(rawDamage);
             return $"{_enemy.getName()} attacks you and deals {rawDamage} damage. (You Regenerated {playerHealAmount} HP / {playerManaAmount} MP)";
         }
-
     }
 }
