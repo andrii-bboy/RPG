@@ -9,16 +9,19 @@ namespace RPG.Forms
 
     public partial class CombatForm : Form
     {
+
         private readonly Player _player;
         private readonly Enemy _enemy;
         private readonly CombatManager _combatManager;
 
         public CombatForm(Player player, Enemy enemy)
         {
+            this.StartPosition = FormStartPosition.CenterParent;
             InitializeComponent();
             _player = player;
             _enemy = enemy;
             _combatManager = new CombatManager(_player, _enemy);
+            txtCombatLog.ScrollBars = ScrollBars.Vertical;
 
             lblEnemyTitle.Text = $"{_enemy.getName()} [Level: {_enemy.getLevel()}]";
             UpdateCombatUI();
@@ -35,22 +38,21 @@ namespace RPG.Forms
         {
             if (playerActionText.StartsWith("Not enough"))
             {
-                txtCombatLog.Text = playerActionText;
+                txtCombatLog.AppendText(playerActionText + Environment.NewLine);
                 return;
             }
 
-            
-            txtCombatLog.Text = playerActionText + Environment.NewLine;
+            txtCombatLog.AppendText(playerActionText + Environment.NewLine);
             UpdateCombatUI();
 
             if (CheckBattleOver()) return;
 
-
             string enemyActionText = _combatManager.ExecuteEnemyTurn();
-
-
-            txtCombatLog.Text += enemyActionText;
+            txtCombatLog.AppendText(enemyActionText + Environment.NewLine);
             UpdateCombatUI();
+
+            txtCombatLog.SelectionStart = txtCombatLog.Text.Length;
+            txtCombatLog.ScrollToCaret();
 
             CheckBattleOver();
         }
@@ -59,6 +61,7 @@ namespace RPG.Forms
         {
             if (_enemy.HP.Value <= 0)
             {
+                _player.DodgeChance = Math.Min(100, _player.DodgeChance + 10);
                 MessageBox.Show($"Victory!\nGold found: {_enemy.getRewardGold()}G\nXP gained: {_enemy.getRewardXp()}", "Combat Ended");
                 _player.Gold += _enemy.getRewardGold();
                 _player.addExperience(_enemy.getRewardXp());
@@ -68,10 +71,17 @@ namespace RPG.Forms
 
             if (_player.HP.Value <= 0)
             {
-                MessageBox.Show("You fell in battle... Game Over.", "Defeat");
-                Application.Exit();
+                _player.DodgeChance = Math.Max(0, _player.DodgeChance - 15);
+                MessageBox.Show("You fell in battle! Escaping back to camp...", "Defeat");
+
+                _player.HP.Value = _player.HP.Max;
+                _player.MP.Value = _player.MP.Max;
+
+
+                this.Close();
                 return true;
             }
+
             return false;
         }
 
@@ -79,5 +89,7 @@ namespace RPG.Forms
         private void btnStrongHit_Click(object sender, EventArgs e) => GameTurnStep(_combatManager.PlayerPowerStrike());
         private void btnBlock_Click(object sender, EventArgs e) => GameTurnStep(_combatManager.PlayerActivateBlock());
         private void btnHeal_Click(object sender, EventArgs e) => GameTurnStep(_combatManager.PlayerHeal());
+        private void btnDodge_Click(object sender, EventArgs e) => GameTurnStep(_combatManager.PlayerDodge());
+
     }
 }

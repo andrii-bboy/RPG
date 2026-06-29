@@ -32,6 +32,8 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.btnRoll = new System.Windows.Forms.Button();
             this.txtMainLog = new System.Windows.Forms.TextBox();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnLoad = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblInfo
@@ -54,7 +56,8 @@
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "save";
             this.btnSave.UseVisualStyleBackColor = false;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+
+
             // 
             // btnRoll
             // 
@@ -78,12 +81,36 @@
             this.txtMainLog.Size = new System.Drawing.Size(840, 106);
             this.txtMainLog.TabIndex = 3;
             // 
+            // btnDelete
+            // 
+            this.btnDelete.BackColor = System.Drawing.Color.Red;
+            this.btnDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnDelete.Location = new System.Drawing.Point(1219, 652);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(168, 56);
+            this.btnDelete.TabIndex = 4;
+            this.btnDelete.Text = "delete";
+            this.btnDelete.UseVisualStyleBackColor = false;
+            // 
+            // btnLoad
+            // 
+            this.btnLoad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.btnLoad.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnLoad.Location = new System.Drawing.Point(529, 574);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(168, 56);
+            this.btnLoad.TabIndex = 5;
+            this.btnLoad.Text = "load";
+            this.btnLoad.UseVisualStyleBackColor = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.ClientSize = new System.Drawing.Size(1399, 743);
+            this.Controls.Add(this.btnLoad);
+            this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.txtMainLog);
             this.Controls.Add(this.btnRoll);
             this.Controls.Add(this.btnSave);
@@ -102,6 +129,8 @@
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnRoll;
         private System.Windows.Forms.TextBox txtMainLog;
+        private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.Button btnLoad;
     }
 }
 

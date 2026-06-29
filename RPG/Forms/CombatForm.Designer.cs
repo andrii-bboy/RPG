@@ -37,6 +37,7 @@
             this.lblEnemyTitle = new System.Windows.Forms.Label();
             this.lblEnemyHP = new System.Windows.Forms.Label();
             this.txtCombatLog = new System.Windows.Forms.TextBox();
+            this.btnDodge = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnHit
@@ -67,7 +68,7 @@
             // 
             this.btnHeal.BackColor = System.Drawing.Color.Lime;
             this.btnHeal.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnHeal.Location = new System.Drawing.Point(131, 356);
+            this.btnHeal.Location = new System.Drawing.Point(131, 344);
             this.btnHeal.Name = "btnHeal";
             this.btnHeal.Size = new System.Drawing.Size(192, 49);
             this.btnHeal.TabIndex = 2;
@@ -79,7 +80,7 @@
             // 
             this.btnBlock.BackColor = System.Drawing.Color.DeepSkyBlue;
             this.btnBlock.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnBlock.Location = new System.Drawing.Point(426, 356);
+            this.btnBlock.Location = new System.Drawing.Point(426, 344);
             this.btnBlock.Name = "btnBlock";
             this.btnBlock.Size = new System.Drawing.Size(185, 49);
             this.btnBlock.TabIndex = 3;
@@ -137,12 +138,25 @@
             this.txtCombatLog.Size = new System.Drawing.Size(480, 120);
             this.txtCombatLog.TabIndex = 9;
             // 
+            // btnDodge
+            // 
+            this.btnDodge.BackColor = System.Drawing.Color.Teal;
+            this.btnDodge.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnDodge.Location = new System.Drawing.Point(275, 399);
+            this.btnDodge.Name = "btnDodge";
+            this.btnDodge.Size = new System.Drawing.Size(192, 45);
+            this.btnDodge.TabIndex = 10;
+            this.btnDodge.Text = "Dodge";
+            this.btnDodge.UseVisualStyleBackColor = false;
+            this.btnDodge.Click += new System.EventHandler(this.btnDodge_Click);
+            // 
             // CombatForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.OliveDrab;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnDodge);
             this.Controls.Add(this.txtCombatLog);
             this.Controls.Add(this.lblEnemyHP);
             this.Controls.Add(this.lblEnemyTitle);
@@ -171,5 +185,6 @@
         private System.Windows.Forms.Label lblEnemyTitle;
         private System.Windows.Forms.Label lblEnemyHP;
         private System.Windows.Forms.TextBox txtCombatLog;
+        private System.Windows.Forms.Button btnDodge;
     }
 }

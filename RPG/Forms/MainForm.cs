@@ -1,31 +1,33 @@
-﻿using System;
-using System.IO;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using RPG.Entitites.Characters;
+﻿using RPG.Entitites.Characters;
 using RPG.Entitites.Characters.Enemies;
+using RPG.Forms;
 using RPG.GameServices;
 using RPG.Utils;
-using RPG.Items;
-using RPG.Forms;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace RPG
 {
     public partial class MainForm : Form
     {
+        private SaveLoadService _saveLoadService = new SaveLoadService();
         private Player _player;
         private List<GameEvent> _events;
-        private const string SaveFileName = "savegame.dat";
 
-        public MainForm()
+        public MainForm(Player chosenPlayer)
         {
             InitializeComponent();
-            _player = new Player("Hero", 1);
+            _player = chosenPlayer;
             _events = GameEvent.GenerateEvents();
-            LoadGameProgress();
+            _player.RecalculateStats();
             UpdateMainFormUI();
-        }
+            txtMainLog.ScrollBars = ScrollBars.Vertical;
 
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+        }
 
 
         private void btnRoll_Click(object sender, EventArgs e)
@@ -45,7 +47,6 @@ namespace RPG
             else if (roll < 85)
             {
                 txtMainLog.AppendText("Danger ahead! A hostile creature appears..." + Environment.NewLine);
-
                 Enemy enemy = Enemy.Generate(_player.getLevel());
                 CombatForm combatForm = new CombatForm(_player, enemy);
                 combatForm.ShowDialog();
@@ -53,11 +54,10 @@ namespace RPG
             else
             {
                 txtMainLog.AppendText("You encountered a traveling equipment merchant!" + Environment.NewLine);
-
                 ShopForm shopForm = new ShopForm(_player);
                 shopForm.ShowDialog();
             }
- 
+
             _player.RecalculateStats();
             UpdateMainFormUI();
         }
@@ -66,9 +66,9 @@ namespace RPG
         {
             lblInfo.Text = $"Name: {_player.getName()}\n" +
                            $"Level: {_player.getLevel()}\n" +
-                           $"XP: {_player.Experience} / {_player.LevelCup}\n" +
-                           $"HP: {_player.HP.Value} / {_player.Endurance * 10}\n" +
-                           $"MP: {_player.MP.Value} / {_player.Intelligence * 5}\n" +
+                           $"XP: 0 / 100\n" +
+                           $"HP: {_player.HP.Value} / {_player.HP.Max}\n" +
+                           $"MP: {_player.MP.Value} / {_player.MP.Max}\n" +
                            $"Gold: {_player.Gold}G\n\n" +
                            $"ATTRIBUTES\n" +
                            $"STR: {_player.Strength} | AGI: {_player.Agility}\n" +
@@ -76,10 +76,11 @@ namespace RPG
                            $"COMBAT STATS\n" +
                            $"Attack Power: {_player.CalculateAttackPower()}\n" +
                            $"Defense: {_player.CalculateDefense()}\n" +
-                           $"Crit Chance: {_player.CriticalChance}%\n\n" +
+                           $"Crit Chance: {_player.CriticalChance}%\n" +
+                           $"Dodge Chance: {_player.DodgeChance}%\n\n" +
                            $"EQUIPMENT\n" +
-                           $"Weapon: {(_player.Weapon != null ? _player.Weapon.Name : "Fists")}\n" +
-                           $"Armor: {(_player.Armor != null ? _player.Armor.Name : "None")}";
+                           $"Weapon: {(_player.Weapon != null ? _player.Weapon.getName() : "Fists")}\n" +
+                           $"Armor: {(_player.Armor != null ? _player.Armor.getName() : "None")}";
         }
 
 
@@ -87,93 +88,37 @@ namespace RPG
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            try
+            _saveLoadService.save(_player);
+        }
+
+        private void btnLoad_Click(object sender, EventArgs e)
+        {
+            Player loadedPlayer = _saveLoadService.loadViaDialog();
+            if (loadedPlayer != null)
             {
-                string directory = Path.GetDirectoryName(SaveFileName);
-                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
+                _player.setLevel(loadedPlayer.getLevel());
+                _player.Gold = loadedPlayer.Gold;
+                _player.Strength = loadedPlayer.Strength;
+                _player.Agility = loadedPlayer.Agility;
+                _player.Intelligence = loadedPlayer.Intelligence;
+                _player.Endurance = loadedPlayer.Endurance;
+                _player.Weapon = loadedPlayer.Weapon;
+                _player.Armor = loadedPlayer.Armor;
+                _player.DodgeChance = loadedPlayer.DodgeChance;
 
+                _player.RecalculateStats();
 
-                using (StreamWriter writer = new StreamWriter(SaveFileName, false, System.Text.Encoding.UTF8))
-                {
-                    writer.WriteLine(_player.getLevel());
-                    writer.WriteLine(_player.Gold);
-                    writer.WriteLine(_player.Strength);
-                    writer.WriteLine(_player.Agility);
-                    writer.WriteLine(_player.Intelligence);
-                    writer.WriteLine(_player.Endurance);
+                _player.HP.Value = _player.HP.Max;
+                _player.MP.Value = _player.MP.Max;
 
-                    if (_player.Weapon != null)
-                    {
-                        writer.WriteLine(_player.Weapon.getName());
-                        writer.WriteLine(_player.Weapon.getPrice());
-                        writer.WriteLine(_player.Weapon.getDamage());
-                    }
-                    else
-                    {
-                        writer.WriteLine("None");
-                    }
-
-                    if (_player.Armor != null)
-                    {
-                        writer.WriteLine(_player.Armor.getName());
-                        writer.WriteLine(_player.Armor.getPrice());
-                        writer.WriteLine(_player.Armor.getDefense());
-                    }
-                    else
-                    {
-                        writer.WriteLine("None");
-                    }
-                }
-            }
-            catch
-            {
+                UpdateMainFormUI();
+                MessageBox.Show("Game loaded successfully!", "Loaded");
             }
         }
 
-
-
-        private void LoadGameProgress()
+        private void btnDelete_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (!File.Exists(SaveFileName)) return;
-
-                using (StreamReader reader = new StreamReader(SaveFileName))
-                {
-                    int lvl = int.Parse(reader.ReadLine());
-                    _player.setLevel(lvl);
-                    _player.Gold = int.Parse(reader.ReadLine());
-                    _player.Strength = int.Parse(reader.ReadLine());
-                    _player.Agility = int.Parse(reader.ReadLine());
-                    _player.Intelligence = int.Parse(reader.ReadLine());
-                    _player.Endurance = int.Parse(reader.ReadLine());
-
-                    string weaponName = reader.ReadLine();
-                    if (weaponName != "None")
-                    {
-                        int price = int.Parse(reader.ReadLine());
-                        int dmg = int.Parse(reader.ReadLine());
-                        _player.Weapon = new Items.Weapon(weaponName, price, dmg);
-                    }
-
-                    string armorName = reader.ReadLine();
-                    if (armorName != "None")
-                    {
-                        int price = int.Parse(reader.ReadLine());
-                        int def = int.Parse(reader.ReadLine());
-                        _player.Armor = new Items.Armor(armorName, price, def);
-                    }
-                }
-
-                _player.RecalculateStats();
-            }
-            catch
-            {
-                File.Delete(SaveFileName);
-            }
+            _saveLoadService.deleteViaDialog();
         }
     }
 }

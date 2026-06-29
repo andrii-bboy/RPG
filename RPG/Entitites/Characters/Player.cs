@@ -15,9 +15,12 @@ namespace RPG.Entitites.Characters
         private int _levelcup = 100;
         private double _criticalChance = 0;
 
+
         public ProgressBarValue MP { get; set; } = null;
         public Weapon Weapon { get; set; } = null;
         public Armor Armor { get; set; } = null;
+        public int DodgeChance { get; set; } = 10;
+
 
         public Player(string name, int level) : base(name, level)
         {
